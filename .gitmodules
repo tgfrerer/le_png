@@ -1,3 +1,6 @@
 [submodule "3rdparty/le_png/lodepng"]
 	path = 3rdparty/le_png/lodepng
 	url = https://github.com/lvandeve/lodepng.git
+[submodule "3rdparty/le_png/fpnge"]
+	path = 3rdparty/le_png/fpnge
+	url = https://github.com/veluca93/fpnge.git

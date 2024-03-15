@@ -5,6 +5,18 @@ set (TARGET le_png)
 depends_on_island_module(le_renderer)
 depends_on_island_module(le_log)
 
+option(LE_PNG_ENABLE_FPNGE "Enable fast png encoder" OFF)
+
+if (LE_PNG_ENABLE_FPNGE)
+	# this is only needed if you want to use fpnge
+	# as the implementation of the fast png encoder
+	# depends on hardware CPU SIMD capabilities.
+	if (CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
+		add_compile_options("-march=native")
+		add_compile_definitions("LE_USE_FPNGE")
+	endif()
+endif()
+
 find_package(Git QUIET)
 if(GIT_FOUND AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git")
 # Update submodules as needed
@@ -34,6 +46,11 @@ set (SOURCES ${SOURCES} "le_png_decoder.cpp")
 set (SOURCES ${SOURCES} "3rdparty/le_png/lodepng/lodepng.cpp")
 set (SOURCES ${SOURCES} "3rdparty/le_png/lodepng/lodepng.h")
 
+if (LE_PNG_ENABLE_FPNGE)
+	set (SOURCES ${SOURCES} "3rdparty/le_png/fpnge/fpnge.cc")
+	set (SOURCES ${SOURCES} "3rdparty/le_png/fpnge/fpnge.h")
+endif()
+
 if (${PLUGINS_DYNAMIC})
     add_library(${TARGET} SHARED ${SOURCES})
     add_dynamic_linker_flags()
@@ -50,6 +67,8 @@ endif()
 
 target_include_directories(${TARGET} PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/le_png/lodepng")
+target_include_directories(${TARGET} PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/le_png/fpnge")
 
 # ----------------------------------------------------------------------
 

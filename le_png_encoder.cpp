@@ -11,6 +11,10 @@
 
 #include "lodepng.h"
 
+#if defined( LE_USE_FPNGE )
+#	include "fpnge.h"
+#endif
+
 struct le_image_encoder_format_o {
 	le::Format format; // todo: how can we make sure that the format is srgb if needed?
 };
@@ -136,16 +140,29 @@ static bool le_image_encoder_write_pixels( le_image_encoder_o* self, uint8_t con
 	state.info_png.color.colortype = colortype; // expose this if you want to allow users to convert images on save
 	state.info_png.color.bitdepth  = bitdepth;  // expose this if you want to allow users to convert images on save
 
-	unsigned char* buffer;
-	size_t         buffersize;
-	uint32_t       result;
+	uint8_t* buffer;
+	size_t   buffersize;
+	uint32_t result = 0;
 
+#ifdef LE_USE_FPNGE
+	struct FPNGEOptions options;
+	FPNGEFillOptions( &options, 4, FPNGE_CICP_NONE );
+
+	size_t bytes_per_channel = bitdepth / 8;
+	buffer                   = ( uint8_t* )malloc( FPNGEOutputAllocSize( bytes_per_channel, num_channels, self->image_width, self->image_height ) );
+
+	buffersize = FPNGEEncode( bytes_per_channel, num_channels, p_pixel_data, self->image_width,
+	                          self->image_width * num_channels * bytes_per_channel, self->image_height,
+	                          buffer, &options );
+#else
+	// NOTE: this will allocate memory for buffer - you must free buffer manually.
 	result = lodepng_encode( &buffer, &buffersize, p_pixel_data, self->image_width, self->image_height, &state );
 	result = state.error;
+#endif
 
 	lodepng_state_cleanup( &state );
 
-	if ( !result ) {
+	if ( 0 == result ) {
 		result = lodepng_save_file( buffer, buffersize, self->output_file_name.c_str() );
 	}
 
