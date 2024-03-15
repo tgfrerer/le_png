@@ -18,11 +18,9 @@ struct le_image_decoder_interface_t;
 struct le_image_encoder_interface_t;
 
 struct le_png_image_encoder_parameters_t {
-	struct channel_t {
-		char channel_name[ 8 ] = {}; // name for channel in .exr output file (standard names are 'R', 'G', 'B', 'A', and 'Y' for grayscale
-		bool non_linear        = 0;  // linear by default
-	};
-	channel_t channels[ 4 ];
+	// parameters are empty for now - we might want to allow
+	// choosing the number of channels, and the compression ratio here
+	// in the future.
 };
 
 // clang-format off

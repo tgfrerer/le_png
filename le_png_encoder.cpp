@@ -29,12 +29,9 @@ static uint64_t le_image_encoder_get_encoder_version( le_image_encoder_o* encode
 
 static le_png_image_encoder_parameters_t get_default_parameters() {
 	using ns = le_png_image_encoder_parameters_t;
-	return le_png_image_encoder_parameters_t{ {
-			{ "R", false },
-			{ "G", false },
-			{ "B", false },
-			{ "A", false },
-	} };
+	return le_png_image_encoder_parameters_t{
+		// empty for now
+	};
 }
 
 // ----------------------------------------------------------------------
