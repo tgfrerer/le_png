@@ -19,7 +19,6 @@ struct le_image_encoder_format_o {
 	le::Format format; // todo: how can we make sure that the format is srgb if needed?
 };
 
-static auto logger = LeLog( "le_png" );
 
 // ----------------------------------------------------------------------
 // We must give clients of this encoder a chance to check whether they can assume
@@ -70,6 +69,7 @@ static void le_image_encoder_destroy( le_image_encoder_o* self ) {
 // ----------------------------------------------------------------------
 
 static void le_image_encoder_set_encode_parameters( le_image_encoder_o* self, void* p_parameters ) {
+	static auto logger = LeLog( "le_png" );
 	if ( p_parameters ) {
 		self->params = *static_cast<le_png_image_encoder_parameters_t*>( p_parameters );
 	} else {
@@ -80,6 +80,7 @@ static void le_image_encoder_set_encode_parameters( le_image_encoder_o* self, vo
 // ----------------------------------------------------------------------
 
 static bool le_image_encoder_write_pixels( le_image_encoder_o* self, uint8_t const* p_pixel_data, size_t pixel_data_byte_count, le_image_encoder_format_o* pixel_data_format ) {
+	static auto logger = LeLog( "le_png" );
 
 	LodePNGColorType colortype    = LCT_MAX_OCTET_VALUE;
 	uint32_t         bitdepth     = 0;

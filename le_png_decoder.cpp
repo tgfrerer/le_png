@@ -12,7 +12,6 @@ struct le_image_decoder_format_o {
 	le::Format format;
 };
 
-static auto logger = LeLog( "le_png" );
 
 // ----------------------------------------------------------------------
 
@@ -46,7 +45,8 @@ static void le_image_decoder_destroy( le_image_decoder_o* self ) {
 // but we don't need to decode the image yet.
 //
 static le_image_decoder_o* le_image_decoder_create( char const* file_path ) {
-	auto self = new le_image_decoder_o();
+	static auto logger = LeLog( "le_png" );
+	auto        self   = new le_image_decoder_o();
 
 	self->png_state = new LodePNGState{};
 	lodepng_state_init( self->png_state );
@@ -138,6 +138,7 @@ cleanup:
 // ----------------------------------------------------------------------
 // read pixels from file into pixel_data
 static bool le_image_decoder_read_pixels( le_image_decoder_o* self, uint8_t* pixel_data, size_t pixels_byte_count ) {
+	static auto logger = LeLog( "le_png" );
 
 	// We must adjust how we read our bytes based on the requested format.
 	// but we could just as well exit early
