@@ -1,6 +1,6 @@
-#include "le_png.h"
-#include "le_log.h"
 #include "le_core.h"
+#include "le_log.h"
+#include "le_png.h"
 
 #include "private/le_renderer/le_renderer_types.h"
 #include "shared/interfaces/le_image_encoder_interface.h"
@@ -49,7 +49,7 @@ struct le_image_encoder_o {
 
 	std::string output_file_name;
 
-	le_png_image_encoder_parameters_t params = get_default_parameters(); // todo: set defaults
+	le_png_image_encoder_parameters_t params = get_default_parameters();
 };
 
 // ----------------------------------------------------------------------
@@ -188,14 +188,14 @@ static void le_image_encoder_update_filename( le_image_encoder_o* self, char con
 
 // ----------------------------------------------------------------------
 
-void* le_image_encoder_clone_parameters_object( void const* obj ) {
+static void* parameters_object_clone( void const* obj ) {
 	auto result = new le_png_image_encoder_parameters_t{
 	    *static_cast<le_png_image_encoder_parameters_t const*>( obj ) };
 	return result;
 };
 
 // ----------------------------------------------------------------------
-void le_image_encoder_destroy_parameters_object( void* obj ) {
+static void parameters_object_destroy( void* obj ) {
 	le_png_image_encoder_parameters_t* typed_obj =
 	    static_cast<le_png_image_encoder_parameters_t*>( obj );
 	delete ( typed_obj );
@@ -219,8 +219,8 @@ void le_register_png_encoder_api( void* api ) {
 		*le_image_encoder_i = le_image_encoder_interface_t();
 	}
 
-	le_image_encoder_i->clone_image_encoder_parameters_object   = le_image_encoder_clone_parameters_object;
-	le_image_encoder_i->destroy_image_encoder_parameters_object = le_image_encoder_destroy_parameters_object;
+	le_image_encoder_i->clone_image_encoder_parameters_object   = parameters_object_clone;
+	le_image_encoder_i->destroy_image_encoder_parameters_object = parameters_object_destroy;
 
 	le_image_encoder_i->create_image_encoder  = le_image_encoder_create;
 	le_image_encoder_i->destroy_image_encoder = le_image_encoder_destroy;
